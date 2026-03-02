@@ -1,0 +1,11 @@
+:root { color-scheme: dark; }
+body { font-family: Inter, system-ui, sans-serif; background:#0b1020; color:#e6ecff; margin:0; }
+.container { max-width:1000px; margin:0 auto; padding:24px; }
+.lead { color:#a9b6dd; }
+.grid { display:grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap:16px; margin-top:16px; }
+.panel { background:#121a33; border:1px solid #2a3a6b; border-radius:12px; padding:14px; }
+textarea { width:100%; background:#0e1530; color:#fff; border:1px solid #2a3a6b; border-radius:8px; padding:10px; }
+button { margin-top:10px; background:#4f7cff; color:#fff; border:none; padding:10px 14px; border-radius:8px; cursor:pointer; }
+.chips { display:flex; flex-wrap:wrap; gap:8px; }
+.chip { background:#1c2850; padding:6px 10px; border-radius:999px; font-size:14px; }
+pre { white-space:pre-wrap; color:#b9c7ef; }

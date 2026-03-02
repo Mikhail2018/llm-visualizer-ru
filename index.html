@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LLM Visualizer RU</title>
+  <link rel="stylesheet" href="./src/styles.css" />
+</head>
+<body>
+  <main class="container">
+    <h1>LLM Visualizer RU</h1>
+    <p class="lead">Интерактивная визуализация: как LLM превращает текст в следующий токен.</p>
+
+    <section class="panel">
+      <label for="prompt">Текст запроса</label>
+      <textarea id="prompt" rows="4">Объясни, как работает трансформер.</textarea>
+      <button id="run">Показать шаги</button>
+    </section>
+
+    <section class="grid">
+      <article class="panel">
+        <h2>1) Токенизация</h2>
+        <div id="tokens" class="chips"></div>
+      </article>
+      <article class="panel">
+        <h2>2) Attention (демо)</h2>
+        <pre id="attention"></pre>
+      </article>
+      <article class="panel">
+        <h2>3) Следующий токен</h2>
+        <div id="next"></div>
+      </article>
+    </section>
+  </main>
+  <script src="./src/app.js"></script>
+</body>
+</html>
