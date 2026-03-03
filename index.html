@@ -121,6 +121,29 @@
       <div id="deepContent" class="muted"></div>
     </section>
 
+    
+
+    <section class="panel" id="trainInfer">
+      <h2>Training vs Inference</h2>
+      <div class="tableWrap">
+        <table class="compare">
+          <thead>
+            <tr><th>Аспект</th><th>Training</th><th>Inference</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>Вход</td><td>Полная последовательность сразу</td><td>Пошаговая генерация токен за токеном</td></tr>
+            <tr><td>Teacher forcing</td><td>Да (истинный прошлый токен)</td><td>Нет (используется сгенерированный токен)</td></tr>
+            <tr><td>Loss</td><td>Cross-entropy по сдвинутым целям</td><td>Loss обычно не считается</td></tr>
+            <tr><td>Mask</td><td>Causal mask обязателен</td><td>Causal mask + KV-cache</td></tr>
+            <tr><td>Сложность attention</td><td>Prefill ~ O(T²) на слой</td><td>Decode шаг ~ O(T) на слой с cache</td></tr>
+            <tr><td>Выход</td><td>Градиенты + обновление весов</td><td>Logits -> sampling (temperature/top-k/top-p)</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="muted">Практически: обучение “дороже” по вычислениям, инференс “длиннее” по времени на длинных ответах.</p>
+    </section>
+
+
     <section class="panel">
       <h2>Ключевые понятия</h2>
       <ul class="facts">

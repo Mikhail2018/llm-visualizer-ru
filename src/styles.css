@@ -30,3 +30,9 @@ button { border:0; border-radius:8px; padding:8px 12px; background:#4f7cff; colo
 .kv{display:grid;grid-template-columns:220px 1fr;gap:8px;margin:6px 0;}
 .kv b{color:#dce6ff;}
 @media (max-width:768px){.kv{grid-template-columns:1fr;}}
+
+.tableWrap { overflow:auto; }
+.compare { width:100%; border-collapse:collapse; font-size:14px; }
+.compare th, .compare td { border:1px solid #31477a; padding:8px; text-align:left; vertical-align:top; }
+.compare th { background:#1a2a51; color:#e7eeff; }
+.compare td { color:#c8d6fc; }
