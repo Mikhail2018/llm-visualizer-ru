@@ -9,6 +9,29 @@ const el = {
   candidates: document.getElementById('candidates')
 };
 
+const stepUI = document.createElement('section');
+stepUI.className = 'panel controls';
+stepUI.innerHTML = `
+  <div class="row">
+    <button id="play">▶ Play</button>
+    <button id="pause">⏸ Pause</button>
+    <button id="step">⏭ Шаг</button>
+    <span id="stageLabel" class="muted">Стадия: ожидание</span>
+  </div>
+`;
+document.querySelector('main.container').appendChild(stepUI);
+
+const controls = {
+  play: document.getElementById('play'),
+  pause: document.getElementById('pause'),
+  step: document.getElementById('step'),
+  stageLabel: document.getElementById('stageLabel')
+};
+
+let stageIndex = 0;
+let timer = null;
+const stages = ['tokens', 'embeddings', 'attention', 'next'];
+
 function tokenize(text) {
   return text
     .replace(/[.,!?;:()]/g, ' ')
@@ -21,6 +44,24 @@ function pseudoValue(token, salt = 1) {
   let acc = 0;
   for (let i = 0; i < token.length; i++) acc += token.charCodeAt(i) * (i + salt);
   return (acc % 100) / 100;
+}
+
+function highlightStage(name) {
+  const map = {
+    tokens: el.tokens.closest('.panel'),
+    embeddings: el.embeddings.closest('.panel'),
+    attention: el.attentionMatrix.closest('.panel'),
+    next: el.next.closest('.panel')
+  };
+  Object.values(map).forEach(p => p.classList.remove('activeStage'));
+  map[name]?.classList.add('activeStage');
+  const labels = {
+    tokens: 'токенизация',
+    embeddings: 'эмбеддинги',
+    attention: 'attention',
+    next: 'выбор следующего токена'
+  };
+  controls.stageLabel.textContent = `Стадия: ${labels[name] || 'ожидание'}`;
 }
 
 function renderTokens(tokens) {
@@ -71,16 +112,61 @@ function renderNext(tokens, mode) {
   el.candidates.innerHTML = cands.map(c => `<div class="cand"><span>${c.w}</span><span>${c.p}</span></div>`).join('');
 }
 
+function clearOutputs() {
+  el.tokens.innerHTML = '';
+  el.embeddings.innerHTML = '';
+  el.attentionMatrix.innerHTML = '';
+  el.next.textContent = '';
+  el.candidates.innerHTML = '';
+}
+
+function renderByStage(stageName, tokens, mode) {
+  if (stageName === 'tokens') renderTokens(tokens);
+  if (stageName === 'embeddings') renderEmbeddings(tokens);
+  if (stageName === 'attention') renderAttention(tokens, mode);
+  if (stageName === 'next') renderNext(tokens, mode);
+  highlightStage(stageName);
+}
+
+function runStep() {
+  const tokens = tokenize(el.prompt.value.trim());
+  const mode = el.mode.value;
+  if (stageIndex === 0) clearOutputs();
+  const stageName = stages[stageIndex];
+  renderByStage(stageName, tokens, mode);
+  stageIndex = (stageIndex + 1) % stages.length;
+}
+
+function play() {
+  if (timer) return;
+  runStep();
+  timer = setInterval(runStep, 900);
+}
+
+function pause() {
+  if (timer) clearInterval(timer);
+  timer = null;
+}
+
 function renderAll() {
-  const text = el.prompt.value.trim();
-  const tokens = tokenize(text);
+  pause();
+  stageIndex = 0;
+  const tokens = tokenize(el.prompt.value.trim());
   const mode = el.mode.value;
   renderTokens(tokens);
   renderEmbeddings(tokens);
   renderAttention(tokens, mode);
   renderNext(tokens, mode);
+  highlightStage('next');
 }
 
 el.run.addEventListener('click', renderAll);
 el.mode.addEventListener('change', renderAll);
+controls.play.addEventListener('click', play);
+controls.pause.addEventListener('click', pause);
+controls.step.addEventListener('click', () => {
+  pause();
+  runStep();
+});
+
 renderAll();
