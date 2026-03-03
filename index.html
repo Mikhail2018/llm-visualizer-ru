@@ -119,11 +119,11 @@
             <option value="real">Real Model beta</option>
           </select>
         </label>
-        <button id="loadReal">Загрузить real model</button>
+        <label class="modeLabel">Model:<select id="realModelId"><option value="Xenova/tiny-random-gpt2">tiny-random-gpt2 (быстро)</option><option value="Xenova/distilgpt2">distilgpt2 (тяжелее)</option></select></label><button id="loadReal">Загрузить real model</button>
         <span id="realStatus" class="muted">модель не загружена</span>
       </div>
       <div id="realTopK" class="candidates"></div>
-      <p class="muted">Модель: Xenova/distilgpt2 (Web, open-source). Это не GPT OpenAI.</p>
+      <p class="muted">Модель выбирается: tiny-random-gpt2 (быстро) или distilgpt2 (точнее, тяжелее). Это не GPT OpenAI.</p>
     </section>
 
   </main>

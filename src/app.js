@@ -20,7 +20,8 @@ const el = {
   dataMode: document.getElementById('dataMode'),
   loadReal: document.getElementById('loadReal'),
   realStatus: document.getElementById('realStatus'),
-  realTopK: document.getElementById('realTopK')
+  realTopK: document.getElementById('realTopK'),
+  realModelId: document.getElementById('realModelId')
 };
 
 const stepUI = document.createElement('section');
@@ -60,21 +61,25 @@ function renderQKV(tokens){ if(!tokens.length){ el.qVec.textContent=el.kVec.text
 let realModel = null;
 let realTokenizer = null;
 let realLoaded = false;
+let loadedModelId = null;
 
 async function ensureRealModel() {
-  if (realLoaded) return true;
+  const wanted = el.realModelId?.value || 'Xenova/tiny-random-gpt2';
+  if (realLoaded && loadedModelId === wanted) return true;
   try {
-    el.realStatus.textContent = 'загрузка модели...';
+    el.realStatus.textContent = `загрузка модели (${wanted})...`;
+    realLoaded = false;
     const tr = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
     const { AutoTokenizer, AutoModelForCausalLM } = tr;
-    realTokenizer = await AutoTokenizer.from_pretrained('Xenova/distilgpt2');
-    realModel = await AutoModelForCausalLM.from_pretrained('Xenova/distilgpt2');
+    realTokenizer = await AutoTokenizer.from_pretrained(wanted);
+    realModel = await AutoModelForCausalLM.from_pretrained(wanted);
+    loadedModelId = wanted;
     realLoaded = true;
-    el.realStatus.textContent = 'модель загружена';
+    el.realStatus.textContent = `модель загружена: ${wanted}`;
     return true;
   } catch (e) {
     console.error(e);
-    el.realStatus.textContent = 'ошибка загрузки модели';
+    el.realStatus.textContent = `ошибка загрузки модели: ${e?.message || e}`;
     return false;
   }
 }
