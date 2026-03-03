@@ -9,12 +9,20 @@
 <body>
   <main class="container">
     <h1>LLM Visualizer RU</h1>
-    <p class="lead">Интерактивная визуализация: как LLM превращает текст в следующий токен.</p>
+    <p class="lead">Интерактивная визуализация: токены → эмбеддинги → attention → выбор следующего токена.</p>
 
-    <section class="panel">
+    <section class="panel controls">
       <label for="prompt">Текст запроса</label>
-      <textarea id="prompt" rows="4">Объясни, как работает трансформер.</textarea>
-      <button id="run">Показать шаги</button>
+      <textarea id="prompt" rows="3">Объясни, как работает трансформер</textarea>
+      <div class="row">
+        <button id="run">Обновить визуализацию</button>
+        <label class="modeLabel">Режим:
+          <select id="mode">
+            <option value="basic">Базовый</option>
+            <option value="advanced">Продвинутый</option>
+          </select>
+        </label>
+      </div>
     </section>
 
     <section class="grid">
@@ -22,13 +30,23 @@
         <h2>1) Токенизация</h2>
         <div id="tokens" class="chips"></div>
       </article>
+
       <article class="panel">
-        <h2>2) Attention (демо)</h2>
-        <pre id="attention"></pre>
+        <h2>2) Эмбеддинги (демо)</h2>
+        <p class="muted">У каждого токена есть вектор. Здесь показана его упрощённая проекция.</p>
+        <div id="embeddings"></div>
       </article>
+
       <article class="panel">
-        <h2>3) Следующий токен</h2>
+        <h2>3) Attention матрица</h2>
+        <p class="muted">Насколько каждый токен “смотрит” на остальные.</p>
+        <div id="attentionMatrix" class="matrix"></div>
+      </article>
+
+      <article class="panel">
+        <h2>4) Следующий токен</h2>
         <div id="next"></div>
+        <div id="candidates" class="candidates"></div>
       </article>
     </section>
   </main>
