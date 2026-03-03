@@ -19,7 +19,7 @@
         <button id="stepNext">Вперёд →</button>
         <button id="play">▶ Авто</button>
         <button id="pause">⏸ Пауза</button>
-        <span id="stageLabel" class="muted">Шаг: 1</span>
+        <label class="modeLabel">Детализация: <select id="detailMode"><option value="basic">Basic</option><option value="deep">Deep</option></select></label><span id="stageLabel" class="muted">Шаг: 1</span>
       </div>
     </section>
 
@@ -113,6 +113,13 @@
       </svg>
     </section>
 
+
+    
+
+    <section class="panel" id="deepPanel">
+      <h2>Deep mode: инженерные детали</h2>
+      <div id="deepContent" class="muted"></div>
+    </section>
 
     <section class="panel">
       <h2>Ключевые понятия</h2>
