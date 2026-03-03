@@ -46,6 +46,46 @@
 
     
 
+    
+
+    <section class="panel" id="fullModelSchema">
+      <h2>Схема всей модели (decoder-only)</h2>
+      <svg viewBox="0 0 1200 320" class="schemaSvg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr2" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0,0 10,4 0,8" fill="#8fb0ff" />
+          </marker>
+        </defs>
+        <rect x="30" y="120" width="140" height="55" rx="10" fill="#1f2f5b"/>
+        <text x="100" y="152" text-anchor="middle" fill="#e8eeff" font-size="16">Tokenizer</text>
+
+        <rect x="210" y="110" width="220" height="75" rx="10" fill="#294678"/>
+        <text x="320" y="142" text-anchor="middle" fill="#e8eeff" font-size="16">Embedding + Positional</text>
+        <text x="320" y="164" text-anchor="middle" fill="#c9d7ff" font-size="13">Input representation</text>
+
+        <rect x="470" y="90" width="330" height="115" rx="10" fill="#335a91"/>
+        <text x="635" y="126" text-anchor="middle" fill="#e8eeff" font-size="18">Transformer Blocks × N</text>
+        <text x="635" y="148" text-anchor="middle" fill="#d3ddff" font-size="13">[Self-Attention + MLP + Residual + Norm]</text>
+        <text x="635" y="170" text-anchor="middle" fill="#d3ddff" font-size="13">Повторяется много раз</text>
+
+        <rect x="840" y="120" width="130" height="55" rx="10" fill="#3f6ea8"/>
+        <text x="905" y="152" text-anchor="middle" fill="#e8eeff" font-size="16">LM Head</text>
+
+        <rect x="1010" y="120" width="150" height="55" rx="10" fill="#4b83ba"/>
+        <text x="1085" y="145" text-anchor="middle" fill="#e8eeff" font-size="15">Logits → Softmax</text>
+        <text x="1085" y="163" text-anchor="middle" fill="#d3ddff" font-size="12">Next token</text>
+
+        <line x1="170" y1="147" x2="210" y2="147" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr2)"/>
+        <line x1="430" y1="147" x2="470" y2="147" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr2)"/>
+        <line x1="800" y1="147" x2="840" y2="147" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr2)"/>
+        <line x1="970" y1="147" x2="1010" y2="147" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr2)"/>
+
+        <path d="M 1120 190 C 1120 250, 520 250, 520 210" fill="none" stroke="#77d7ff" stroke-width="2.5" marker-end="url(#arr2)"/>
+        <text x="890" y="245" fill="#a8bee9" font-size="13">авторегрессия: новый токен добавляется во вход и цикл повторяется</text>
+      </svg>
+      <p class="muted">Это общая схема модели целиком. Блок выше показывает внутренности одного Transformer-блока.</p>
+    </section>
+
     <section class="panel" id="archSchema">
       <h2>Схема блока Transformer</h2>
       <svg viewBox="0 0 1200 280" class="schemaSvg" xmlns="http://www.w3.org/2000/svg">
