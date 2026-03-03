@@ -43,3 +43,15 @@ select { background:#0e1530; color:#fff; border:1px solid #2a3a6b; border-radius
 .miniBar { height:7px; border-radius:999px; background:#0b1226; overflow:hidden; margin:4px 0; }
 .miniBar > i { display:block; height:100%; background:linear-gradient(90deg,#6ae0ff,#8a8fff); }
 .miniLbl { font-size:11px; color:#b9c7ef; display:flex; justify-content:space-between; }
+
+
+@media (max-width: 768px) {
+  .container { padding: 14px; }
+  h1 { font-size: 26px; margin: 0 0 8px; }
+  h2 { font-size: 18px; }
+  .row { gap: 8px; }
+  button { padding: 8px 10px; font-size: 13px; }
+  .panel { padding: 10px; }
+  .matrixRow { grid-auto-columns:minmax(18px,1fr); }
+  .cell { font-size:10px; padding:4px 0; }
+}

@@ -14,3 +14,7 @@
 - Блоки: токены, эмбеддинги, attention, next-token prediction
 - Режимы: базовый / продвинутый
 - Полная русская локализация
+
+
+## Деплой (GitHub Pages)
+После push в `main` сайт деплоится автоматически через GitHub Actions (`.github/workflows/pages.yml`).
