@@ -103,6 +103,29 @@
       <div id="llm3d" class="llm3d"></div>
     </section>
 
+  
+    <section class="panel" id="realityNotice">
+      <h2>Важно про достоверность</h2>
+      <p><b>Симулятор:</b> текущие 2D/3D блоки показывают принципы Transformer в учебном виде и <b>не являются</b> трассировкой внутренностей GPT.</p>
+      <p class="muted">Ниже добавлен режим <b>Real Model (beta)</b> — он использует открытую модель в браузере и показывает реальные top-k вероятности следующего токена для этой модели.</p>
+    </section>
+
+    <section class="panel">
+      <h2>Real Model (beta): next-token from open model</h2>
+      <div class="row" style="margin-bottom:10px;">
+        <label class="modeLabel">Режим данных:
+          <select id="dataMode">
+            <option value="sim">Simulator (учебный)</option>
+            <option value="real">Real Model beta</option>
+          </select>
+        </label>
+        <button id="loadReal">Загрузить real model</button>
+        <span id="realStatus" class="muted">модель не загружена</span>
+      </div>
+      <div id="realTopK" class="candidates"></div>
+      <p class="muted">Модель: Xenova/distilgpt2 (Web, open-source). Это не GPT OpenAI.</p>
+    </section>
+
   </main>
   <script type="module" src="./src/app.js"></script>
 </body>

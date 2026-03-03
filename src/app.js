@@ -16,7 +16,11 @@ const el = {
   vVec: document.getElementById('vVec'),
   softmaxBars: document.getElementById('softmaxBars'),
   headsCompare: document.getElementById('headsCompare'),
-  llm3d: document.getElementById('llm3d')
+  llm3d: document.getElementById('llm3d'),
+  dataMode: document.getElementById('dataMode'),
+  loadReal: document.getElementById('loadReal'),
+  realStatus: document.getElementById('realStatus'),
+  realTopK: document.getElementById('realTopK')
 };
 
 const stepUI = document.createElement('section');
@@ -46,10 +50,72 @@ function renderEmbeddings(tokens){ el.embeddings.innerHTML=tokens.map(t=>{const 
 function attentionWeight(a,b,mode){ const base=0.15+((a+1)/(b+2)), noise=(Math.sin((a+1)*(b+2))+1)/10, m=mode==='advanced'?1.25:1; return Math.min(0.99, +(Math.max(0.01,(base*0.3+noise)*m).toFixed(2))); }
 function renderAttention(tokens,mode){ const n=tokens.length,rows=[]; for(let i=0;i<n;i++){ const cells=[]; for(let j=0;j<n;j++){ const w=attentionWeight(i,j,mode), light=18+Math.round(w*38); cells.push(`<div class="cell" style="background:hsl(210 70% ${light}%)">${w}</div>`);} rows.push(`<div class="matrixRow">${cells.join('')}</div>`);} el.attentionMatrix.innerHTML=rows.join(''); }
 function nextTokenCandidates(tokens,mode){ const bank=['и','это','потому','что','модель','предсказывает','контекст','далее']; return bank.map((w,idx)=>({w,p:+(0.06+((idx+1)/100)+(tokens.length%5)/50+(mode==='advanced'?0.01:0)).toFixed(2)})).sort((a,b)=>b.p-a.p).slice(0,5); }
-function renderNext(tokens,mode){ const c=nextTokenCandidates(tokens,mode); el.next.textContent=`Выбранный токен (top-1): «${c[0].w}»`; el.candidates.innerHTML=c.map(x=>`<div class="cand"><span>${x.w}</span><span>${x.p}</span></div>`).join(''); }
+function renderNext(tokens,mode){ const c=nextTokenCandidates(tokens,mode); el.next.textContent=`Выбранный токен (top-1): «${c[0].w}»`; el.candidates.innerHTML=c.map(x=>`<div class=\"cand\"><span>${x.w}</span><span>${x.p}</span></div>`).join(''); if (el.dataMode?.value === 'real') renderRealTopK(el.prompt.value.trim()); }
 function updateTokenSelector(tokens){ const prev=el.qkvToken.value; el.qkvToken.innerHTML=tokens.map((t,i)=>`<option value="${i}">${t}</option>`).join(''); if(prev && +prev<tokens.length) el.qkvToken.value=prev; }
 function renderHeadsCompare(tokens,qi){ if(!el.headsCompare) return; if(!tokens.length){el.headsCompare.innerHTML='';return;} const cards=[1,2,3].map(head=>{ const q=vecForToken(tokens[qi],'q',head), kAll=tokens.map(t=>vecForToken(t,'k',head)), probs=softmax(kAll.map(k=>dot(q,k))); const top=probs.map((p,i)=>({t:tokens[i],p})).sort((a,b)=>b.p-a.p).slice(0,3); const rows=top.map(x=>{const pct=Math.round(x.p*100); return `<div><div class="miniLbl"><span>${x.t}</span><span>${pct}%</span></div><div class="miniBar"><i style="width:${pct}%"></i></div></div>`;}).join(''); return `<div class="headCard"><h4>Head ${head}</h4>${rows}</div>`; }); el.headsCompare.innerHTML=cards.join(''); }
 function renderQKV(tokens){ if(!tokens.length){ el.qVec.textContent=el.kVec.textContent=el.vVec.textContent=''; el.softmaxBars.innerHTML=''; return; } updateTokenSelector(tokens); const qi=+el.qkvToken.value||0, head=+(el.headSelect?.value||1), qTok=tokens[qi], q=vecForToken(qTok,'q',head), kAll=tokens.map(t=>vecForToken(t,'k',head)), vAll=tokens.map(t=>vecForToken(t,'v',head)); const probs=softmax(kAll.map(k=>dot(q,k))); el.qVec.textContent=`Head ${head}\n${qTok}\n[${q.join(', ')}]`; el.kVec.textContent=tokens.map((t,i)=>`${t}: [${kAll[i].join(', ')}]`).join('\n'); el.vVec.textContent=tokens.map((t,i)=>`${t}: [${vAll[i].join(', ')}]`).join('\n'); el.softmaxBars.innerHTML=probs.map((p,i)=>{const pct=Math.round(p*100); return `<div class="sbar"><div class="lbl">${tokens[i]} — ${pct}%</div><div class="wrap"><div class="fill" style="width:${pct}%"></div></div></div>`;}).join(''); renderHeadsCompare(tokens,qi); }
+
+
+// -------- Real model (beta) --------
+let realModel = null;
+let realTokenizer = null;
+let realLoaded = false;
+
+async function ensureRealModel() {
+  if (realLoaded) return true;
+  try {
+    el.realStatus.textContent = 'загрузка модели...';
+    const tr = await import('https://cdn.jsdelivr.net/npm/@xenova/transformers@2.17.2');
+    const { AutoTokenizer, AutoModelForCausalLM } = tr;
+    realTokenizer = await AutoTokenizer.from_pretrained('Xenova/distilgpt2');
+    realModel = await AutoModelForCausalLM.from_pretrained('Xenova/distilgpt2');
+    realLoaded = true;
+    el.realStatus.textContent = 'модель загружена';
+    return true;
+  } catch (e) {
+    console.error(e);
+    el.realStatus.textContent = 'ошибка загрузки модели';
+    return false;
+  }
+}
+
+function topKFromLogits(logits, k = 5) {
+  const arr = Array.from(logits);
+  const m = Math.max(...arr);
+  const ex = arr.map(v => Math.exp(v - m));
+  const sum = ex.reduce((a, b) => a + b, 0);
+  const probs = ex.map(v => v / sum);
+  const idx = probs.map((p, i) => ({ i, p })).sort((a, b) => b.p - a.p).slice(0, k);
+  return idx;
+}
+
+async function renderRealTopK(promptText) {
+  if (!el.realTopK) return;
+  if (!realLoaded) {
+    el.realTopK.innerHTML = '<div class="muted">Сначала нажми "Загрузить real model".</div>';
+    return;
+  }
+  try {
+    el.realStatus.textContent = 'считаю top-k...';
+    const enc = await realTokenizer(promptText || 'Hello');
+    const out = await realModel(enc);
+    const logits = out.logits;
+    const shape = logits.dims || logits.shape;
+    const vocab = shape[2];
+    const seq = shape[1];
+    const data = await logits.data;
+    const offset = (seq - 1) * vocab;
+    const last = data.slice(offset, offset + vocab);
+    const top = topKFromLogits(last, 5);
+    const ids = top.map(x => x.i);
+    const toks = await realTokenizer.batch_decode(ids, { skip_special_tokens: false });
+    el.realTopK.innerHTML = top.map((x, n) => `<div class="cand"><span>${n + 1}. ${String(toks[n]).replace(/</g,'&lt;')}</span><span>${(x.p * 100).toFixed(2)}%</span></div>`).join('');
+    el.realStatus.textContent = 'готово';
+  } catch (e) {
+    console.error(e);
+    el.realStatus.textContent = 'ошибка inference';
+  }
+}
 
 function clearOutputs(){ el.tokens.innerHTML=el.embeddings.innerHTML=el.attentionMatrix.innerHTML=el.candidates.innerHTML=''; el.next.textContent=''; }
 function renderByStage(stage,tokens,mode){ if(stage==='tokens')renderTokens(tokens); if(stage==='embeddings')renderEmbeddings(tokens); if(stage==='attention')renderAttention(tokens,mode); if(stage==='next')renderNext(tokens,mode); if(stage==='qkv')renderQKV(tokens); highlightStage(stage); }
@@ -62,6 +128,8 @@ el.run.addEventListener('click', renderAll);
 el.mode.addEventListener('change', renderAll);
 el.qkvToken?.addEventListener('change', ()=>{ const t=tokenize(el.prompt.value.trim()); renderQKV(t); update3D(t); });
 el.headSelect?.addEventListener('change', ()=>{ const t=tokenize(el.prompt.value.trim()); renderQKV(t); update3D(t); });
+el.dataMode?.addEventListener('change', ()=>{ if (el.dataMode.value === 'real') renderRealTopK(el.prompt.value.trim()); else if (el.realTopK) el.realTopK.innerHTML=''; });
+el.loadReal?.addEventListener('click', async ()=>{ await ensureRealModel(); if (el.dataMode?.value==='real') await renderRealTopK(el.prompt.value.trim()); });
 controls.play.addEventListener('click', play);
 controls.pause.addEventListener('click', pause);
 controls.step.addEventListener('click', ()=>{ pause(); runStep(); });
