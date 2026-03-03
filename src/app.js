@@ -12,7 +12,8 @@ const el = {
   qVec: document.getElementById('qVec'),
   kVec: document.getElementById('kVec'),
   vVec: document.getElementById('vVec'),
-  softmaxBars: document.getElementById('softmaxBars')
+  softmaxBars: document.getElementById('softmaxBars'),
+  headsCompare: document.getElementById('headsCompare')
 };
 
 const stepUI = document.createElement('section');
@@ -153,6 +154,31 @@ function renderQKV(tokens) {
     const pct = Math.round(p * 100);
     return `<div class="sbar"><div class="lbl">${tokens[i]} — ${pct}%</div><div class="wrap"><div class="fill" style="width:${pct}%"></div></div></div>`;
   }).join('');
+
+  renderHeadsCompare(tokens, qi);
+}
+
+
+
+function renderHeadsCompare(tokens, qi) {
+  if (!el.headsCompare) return;
+  if (!tokens.length) { el.headsCompare.innerHTML=''; return; }
+  const cards = [1,2,3].map(head => {
+    const q = vecForToken(tokens[qi], 'q', head);
+    const kAll = tokens.map(t => vecForToken(t, 'k', head));
+    const scores = kAll.map(k => dot(q, k));
+    const probs = softmax(scores);
+    const top = probs
+      .map((p,i)=>({t:tokens[i],p}))
+      .sort((a,b)=>b.p-a.p)
+      .slice(0,3);
+    const rows = top.map(x => {
+      const pct = Math.round(x.p*100);
+      return `<div><div class="miniLbl"><span>${x.t}</span><span>${pct}%</span></div><div class="miniBar"><i style="width:${pct}%"></i></div></div>`;
+    }).join('');
+    return `<div class="headCard"><h4>Head ${head}</h4>${rows}</div>`;
+  });
+  el.headsCompare.innerHTML = cards.join('');
 }
 
 function clearOutputs() {

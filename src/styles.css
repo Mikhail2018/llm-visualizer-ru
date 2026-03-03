@@ -36,3 +36,10 @@ select { background:#0e1530; color:#fff; border:1px solid #2a3a6b; border-radius
 .sbar .lbl { font-size:12px; color:#c4d3f8; margin-bottom:3px; }
 .sbar .wrap { height:8px; border-radius:999px; background:#0e1530; overflow:hidden; }
 .sbar .fill { height:100%; background:linear-gradient(90deg,#7b8fff,#66e0ff); }
+
+.headsCompare { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+.headCard { background:#0f1730; border:1px solid #2a3a6b; border-radius:10px; padding:8px; }
+.headCard h4 { margin:0 0 6px; font-size:12px; color:#d7e2ff; }
+.miniBar { height:7px; border-radius:999px; background:#0b1226; overflow:hidden; margin:4px 0; }
+.miniBar > i { display:block; height:100%; background:linear-gradient(90deg,#6ae0ff,#8a8fff); }
+.miniLbl { font-size:11px; color:#b9c7ef; display:flex; justify-content:space-between; }
