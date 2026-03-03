@@ -44,6 +44,36 @@
       </article>
     </section>
 
+    
+
+    <section class="panel" id="archSchema">
+      <h2>Схема блока Transformer</h2>
+      <svg viewBox="0 0 1200 280" class="schemaSvg" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arr" markerWidth="10" markerHeight="8" refX="9" refY="4" orient="auto">
+            <polygon points="0,0 10,4 0,8" fill="#8fb0ff" />
+          </marker>
+        </defs>
+        <rect x="20" y="90" width="130" height="50" rx="10" fill="#1f2f5b"/><text x="85" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">Tokens</text>
+        <rect x="190" y="90" width="170" height="50" rx="10" fill="#274071"/><text x="275" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">Embedding + Pos</text>
+        <rect x="400" y="90" width="120" height="50" rx="10" fill="#2e4c7f"/><text x="460" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">Q/K/V</text>
+        <rect x="560" y="90" width="190" height="50" rx="10" fill="#345a90"/><text x="655" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">Self-Attention</text>
+        <rect x="790" y="90" width="120" height="50" rx="10" fill="#3b679f"/><text x="850" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">Add&Norm</text>
+        <rect x="950" y="90" width="110" height="50" rx="10" fill="#4375ad"/><text x="1005" y="120" text-anchor="middle" fill="#e8eeff" font-size="16">FFN</text>
+        <rect x="1090" y="90" width="90" height="50" rx="10" fill="#4b83ba"/><text x="1135" y="120" text-anchor="middle" fill="#e8eeff" font-size="14">Logits</text>
+
+        <line x1="150" y1="115" x2="190" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+        <line x1="360" y1="115" x2="400" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+        <line x1="520" y1="115" x2="560" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+        <line x1="750" y1="115" x2="790" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+        <line x1="910" y1="115" x2="950" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+        <line x1="1060" y1="115" x2="1090" y2="115" stroke="#8fb0ff" stroke-width="3" marker-end="url(#arr)"/>
+
+        <text x="655" y="175" text-anchor="middle" fill="#a8bee9" font-size="14">(QKᵀ / √dₖ + mask) → softmax → A·V</text>
+      </svg>
+    </section>
+
+
     <section class="panel">
       <h2>Ключевые понятия</h2>
       <ul class="facts">
