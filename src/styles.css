@@ -62,3 +62,6 @@ select { background:#0e1530; color:#fff; border:1px solid #2a3a6b; border-radius
 
 #realityNotice{border-color:#7a5f2b;background:#1a1426;}
 #realityNotice b{color:#ffd58a;}
+
+details > summary { cursor:pointer; color:#d7e2ff; }
+details { border:1px dashed #334a80; border-radius:8px; padding:8px; background:#0f1730; }

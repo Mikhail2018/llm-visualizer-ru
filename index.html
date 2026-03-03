@@ -111,7 +111,11 @@
     </section>
 
     <section class="panel">
-      <h2>Real Model (beta): next-token from open model</h2>
+      <h2>Мгновенный режим (по умолчанию)</h2>
+      <p class="muted">Сайт работает сразу без загрузки модели — как интерактивная precomputed-визуализация.</p>
+      <details>
+        <summary><b>Экспертный режим: Real Model (опционально)</b></summary>
+        <div style="margin-top:10px;">
       <div class="row" style="margin-bottom:10px;">
         <label class="modeLabel">Режим данных:
           <select id="dataMode">
@@ -123,7 +127,9 @@
         <span id="realStatus" class="muted">модель не загружена</span>
       </div>
       <div id="realTopK" class="candidates"></div>
-      <p class="muted">Модель выбирается: tiny-random-gpt2 (быстро) или distilgpt2 (точнее, тяжелее). Это не GPT OpenAI.</p>
+      <p class="muted">Модель выбирается: tiny-random-gpt2 (быстро) или distilgpt2 (тяжелее). Это не GPT OpenAI.</p>
+        </div>
+      </details>
     </section>
 
   </main>
