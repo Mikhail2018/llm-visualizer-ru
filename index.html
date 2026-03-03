@@ -3,136 +3,58 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>LLM Visualizer RU</title>
+  <title>Transformer Inside RU</title>
   <link rel="stylesheet" href="./src/styles.css" />
 </head>
 <body>
   <main class="container">
-    <h1>LLM Visualizer RU</h1>
-    <p class="lead">Интерактивная визуализация: токены → эмбеддинги → attention → выбор следующего токена.</p>
+    <h1>Внутреннее строение Transformer (RU)</h1>
+    <p class="lead">Учебная интерактивная схема: как токены проходят через блок трансформера до next-token.</p>
 
     <section class="panel controls">
-      <label for="prompt">Текст запроса</label>
-      <textarea id="prompt" rows="3">Объясни, как работает трансформер</textarea>
+      <label for="prompt">Текст</label>
+      <textarea id="prompt" rows="3">Кошка сидит на</textarea>
       <div class="row">
-        <button id="run">Обновить визуализацию</button>
-        <label class="modeLabel">Режим:
-          <select id="mode">
-            <option value="basic">Базовый</option>
-            <option value="advanced">Продвинутый</option>
-          </select>
-        </label>
+        <button id="stepPrev">← Назад</button>
+        <button id="stepNext">Вперёд →</button>
+        <button id="play">▶ Авто</button>
+        <button id="pause">⏸ Пауза</button>
+        <span id="stageLabel" class="muted">Шаг: 1</span>
       </div>
+    </section>
+
+    <section class="panel">
+      <h2 id="stageTitle">1) Токенизация</h2>
+      <p id="stageDesc" class="muted"></p>
+      <div id="stageView"></div>
     </section>
 
     <section class="grid">
       <article class="panel">
-        <h2>1) Токенизация</h2>
-        <div id="tokens" class="chips"></div>
+        <h3>Pipeline</h3>
+        <ol id="pipeline" class="pipeline"></ol>
       </article>
-
       <article class="panel">
-        <h2>2) Эмбеддинги (демо)</h2>
-        <p class="muted">У каждого токена есть вектор. Здесь показана его упрощённая проекция.</p>
-        <div id="embeddings"></div>
+        <h3>Формула шага</h3>
+        <pre id="formula" class="formula"></pre>
       </article>
-
       <article class="panel">
-        <h2>3) Attention матрица</h2>
-        <p class="muted">Насколько каждый токен “смотрит” на остальные.</p>
-        <div id="attentionMatrix" class="matrix"></div>
+        <h3>Зачем этот шаг</h3>
+        <p id="why" class="muted"></p>
       </article>
-
-      <article class="panel">
-        <h2>4) Следующий токен</h2>
-        <div id="next"></div>
-        <div id="candidates" class="candidates"></div>
-      </article>
-    </section>
-  
-
-    <section class="panel legend">
-      <h2>Легенда стадий</h2>
-      <ol>
-        <li><b>Токенизация</b> — разбиение текста на токены (кусочки слов/символов).</li>
-        <li><b>Эмбеддинги</b> — перевод токенов в числовые векторы (смысловые координаты).</li>
-        <li><b>Attention</b> — расчёт, какие токены важнее друг для друга в контексте.</li>
-        <li><b>Next token</b> — оценка вероятностей и выбор следующего токена.</li>
-      </ol>
-      <p class="muted">Важно: это учебная визуализация (упрощённая), а не точная внутренняя трасса конкретной модели.</p>
-    </section>
-
-  
-
-    <section class="panel">
-      <h2>Transformer block (Q / K / V + Softmax)</h2>
-      <p class="muted">Упрощённая демонстрация одного attention-head: score = Q·K, затем softmax и взвешенная сумма V.</p>
-      <div class="row" style="margin-bottom:10px;">
-        <label class="modeLabel">Токен для фокуса:
-          <select id="qkvToken"></select>
-        </label>
-        <label class="modeLabel">Head:
-          <select id="headSelect">
-            <option value="1">Head 1</option>
-            <option value="2">Head 2</option>
-            <option value="3">Head 3</option>
-          </select>
-        </label>
-      </div>
-      <div id="qkv" class="qkvGrid">
-        <div class="panel mini"><h3>Q</h3><pre id="qVec"></pre></div>
-        <div class="panel mini"><h3>K</h3><pre id="kVec"></pre></div>
-        <div class="panel mini"><h3>V</h3><pre id="vVec"></pre></div>
-      </div>
-      <div class="panel mini" style="margin-top:10px;">
-        <h3>Scores → Softmax</h3>
-        <div id="softmaxBars"></div>
-      </div>
-      <div class="panel mini" style="margin-top:10px;">
-        <h3>Сравнение heads (side-by-side)</h3>
-        <div id="headsCompare" class="headsCompare"></div>
-      </div>
-
-    </section>
-
-  
-
-    <section class="panel">
-      <h2>3D LLM Scene (v0.1)</h2>
-      <p class="muted">Токены (слева), слой embeddings (центр), next-token (справа) + attention-лучи.</p>
-      <div id="llm3d" class="llm3d"></div>
-    </section>
-
-  
-    <section class="panel" id="realityNotice">
-      <h2>Важно про достоверность</h2>
-      <p><b>Симулятор:</b> текущие 2D/3D блоки показывают принципы Transformer в учебном виде и <b>не являются</b> трассировкой внутренностей GPT.</p>
-      <p class="muted">Ниже добавлен режим <b>Real Model (beta)</b> — он использует открытую модель в браузере и показывает реальные top-k вероятности следующего токена для этой модели.</p>
     </section>
 
     <section class="panel">
-      <h2>Мгновенный режим (по умолчанию)</h2>
-      <p class="muted">Сайт работает сразу без загрузки модели — как интерактивная precomputed-визуализация.</p>
-      <details>
-        <summary><b>Экспертный режим: Real Model (опционально)</b></summary>
-        <div style="margin-top:10px;">
-      <div class="row" style="margin-bottom:10px;">
-        <label class="modeLabel">Режим данных:
-          <select id="dataMode">
-            <option value="sim">Simulator (учебный)</option>
-            <option value="real">Real Model beta</option>
-          </select>
-        </label>
-        <label class="modeLabel">Model:<select id="realModelId"><option value="Xenova/tiny-random-gpt2">tiny-random-gpt2 (быстро)</option><option value="Xenova/distilgpt2">distilgpt2 (тяжелее)</option></select></label><button id="loadReal">Загрузить real model</button>
-        <span id="realStatus" class="muted">модель не загружена</span>
-      </div>
-      <div id="realTopK" class="candidates"></div>
-      <p class="muted">Модель выбирается: tiny-random-gpt2 (быстро) или distilgpt2 (тяжелее). Это не GPT OpenAI.</p>
-        </div>
-      </details>
+      <h2>Ключевые понятия</h2>
+      <ul class="facts">
+        <li><b>Self-Attention</b>: каждый токен смотрит на остальные токены в контексте.</li>
+        <li><b>Causal Mask</b>: в генерации токен не видит будущее (только левый контекст).</li>
+        <li><b>Multi-Head</b>: несколько «взглядов» на один и тот же контекст.</li>
+        <li><b>Add & Norm</b>: стабилизируют и ускоряют обучение.</li>
+      </ul>
     </section>
-
   </main>
-  <script type="module" src="./src/app.js"></script>
+
+  <script src="./src/app.js"></script>
 </body>
 </html>
