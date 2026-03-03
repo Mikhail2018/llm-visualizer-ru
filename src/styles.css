@@ -26,3 +26,13 @@ select { background:#0e1530; color:#fff; border:1px solid #2a3a6b; border-radius
 
 .legend ol { margin: 8px 0 0 18px; padding: 0; }
 .legend li { margin: 6px 0; line-height: 1.4; }
+
+
+.qkvGrid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; }
+.panel.mini { padding:10px; }
+.panel.mini h3 { margin:0 0 6px; font-size:14px; color:#d9e3ff; }
+.panel.mini pre { margin:0; font-size:12px; color:#b7c7ee; white-space:pre-wrap; }
+.sbar { margin:6px 0; }
+.sbar .lbl { font-size:12px; color:#c4d3f8; margin-bottom:3px; }
+.sbar .wrap { height:8px; border-radius:999px; background:#0e1530; overflow:hidden; }
+.sbar .fill { height:100%; background:linear-gradient(90deg,#7b8fff,#66e0ff); }
